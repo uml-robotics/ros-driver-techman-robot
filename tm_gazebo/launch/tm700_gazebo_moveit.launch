@@ -1,17 +1,51 @@
 <?xml version="1.0"?>
 <launch>
+  
+  <!-- Gazebo simulation arguments -->
+  <arg name="sim" default="true" doc="If true, *robot*_planning_execution.launch uses ros_controllers instead of real controllers" />
+  <arg name="limited" default="true"  doc="If true, limits joint range [-PI, PI] on all joints" />
+  <arg name="paused" default="false" doc="Starts gazebo in paused mode" />
+  <arg name="gui" default="true" doc="Starts gazebo gui" />
+  <arg name="config" default="true" doc="TODO" />
 
-  <include file="$(find tm_gazebo)/launch/tm700.launch"/>
+  <!-- Robot model information for choosing correct launch/configuration files -->
+  <arg name="model" default="tm700" doc="Robot model: tm700 (tm5-700) or tm900 (tm5-900) (tm900 not currently implemented)"/>
+  <arg name="sim_workstation" default="false" doc="Attaches robot to simulated ARMada workstation" />
+  <arg name="gripper" default="" doc="Attaches gripper to end of robot arm" />
+  <arg name="eih" default="true" doc="Plugin support for Eye-in-hand camera in model" />
+
+  <!-- gazebo robot bringup -->
+  <include file="$(find tm_gazebo)/launch/$(arg model).launch" >
+    <arg name="limited" value="$(arg limited)" />
+    <arg name="sim_workstation" value="$(arg sim_workstation)" />
+    <arg name="gripper" value="$(arg gripper)" />
+    <arg name="eih" value="$(arg eih)" />
+    <arg name="paused" value="$(arg paused)"/>
+  </include>
   
-  <!-- Remap oint_trajectory_action -->
+  <!-- Remap joint_trajectory_action -->
   <remap from="/joint_trajectory_action" to="/arm_controller/follow_joint_trajectory"/>
-  
-  <include file="$(find tm700_moveit_config)/launch/move_group.launch">
-    <arg name="publish_monitored_planning_scene" value="true" />
-  </include>
-  
-  <include file="$(find tm700_moveit_config)/launch/moveit_rviz.launch">
-    <arg name="config" value="true"/>
-  </include>
+
+  <!-- launch robot-specific files based on model and whether gripper is present -->
+  <group if="$(eval gripper == '')" >
+    <!-- move_group launch no gripper -->
+    <include file="$(eval find(arg('model') + '_moveit_config') + '/launch/' + 'move_group.launch')">
+      <arg name="publish_monitored_planning_scene" value="true" />
+    </include>
+    <!-- moveit_rviz launch no gripper -->
+    <include file="$(eval find(arg('model') + '_moveit_config') + '/launch/' + 'moveit_rviz.launch')">
+      <arg name="config" value="true"/>
+    </include>
+  </group>
+  <group unless="$(eval gripper == '')" >
+    <!-- move_group launch w/ gripper -->
+    <include file="$(eval find(arg('model') + '_' + arg('gripper') + '_moveit_config') + '/launch/' + 'move_group.launch')">
+      <arg name="publish_monitored_planning_scene" value="true" />
+    </include>
+    <!-- moveit_rviz launch w/ gripper -->
+    <include file="$(eval find(arg('model') + '_' + arg('gripper') + '_moveit_config') + '/launch/' + 'moveit_rviz.launch')">
+      <arg name="config" value="true"/>
+    </include>
+  </group>
   
 </launch>

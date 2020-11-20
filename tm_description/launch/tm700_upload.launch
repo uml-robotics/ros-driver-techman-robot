@@ -1,15 +1,61 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="eih" default="false" />
   <arg name="limited" default="false"/>
+  <arg name="sim_workstation" default="false" />
+  <arg name="gripper" default="" />
+  <arg name="eih" default="false" />
 
-  <group unless="$(arg eih)">
-    <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot.urdf.xacro'" />
-    <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_joint_limited.urdf.xacro'" />
+  <group unless="$(arg sim_workstation)" >
+
+    <group if="$(eval gripper == '')" >
+      <group unless="$(arg eih)">
+        <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot.urdf.xacro'" />
+        <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_joint_limited.urdf.xacro'" />
+      </group>
+      <group if="$(arg eih)">
+        <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_eih.urdf.xacro'" />
+        <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_joint_limited_eih.urdf.xacro'" />
+      </group>
+    </group>
+
+    <group unless="$(eval gripper == '')" >
+      <group unless="$(arg eih)">
+        <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_$(arg gripper).urdf.xacro'" />
+        <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_$(arg gripper)_joint_limited.urdf.xacro'" />
+      </group>
+      <group if="$(arg eih)">
+        <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_$(arg gripper)_eih.urdf.xacro'" />
+        <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_$(arg gripper)_joint_limited_eih.urdf.xacro'" />
+      </group>
+    </group>
+
   </group>
-  <group if="$(arg eih)">
-    <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_eih.urdf.xacro'" />
-    <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_joint_limited_eih.urdf.xacro'" />
+
+
+  <group if="$(arg sim_workstation)" >
+
+    <group if="$(eval gripper == '')" >
+      <group unless="$(arg eih)">
+        <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_workstation.urdf.xacro'" />
+        <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_joint_limited_workstation.urdf.xacro'" />
+      </group>
+      <group if="$(arg eih)">
+        <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_eih_workstation.urdf.xacro'" />
+        <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_joint_limited_eih_workstation.urdf.xacro'" />
+      </group>
+    </group>
+
+    <group unless="$(eval gripper == '')" >
+      <group unless="$(arg eih)">
+        <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_$(arg gripper)_workstation.urdf.xacro'" />
+        <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_$(arg gripper)_joint_limited_workstation.urdf.xacro'" />
+      </group>
+      <group if="$(arg eih)">
+        <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_$(arg gripper)_eih_workstation.urdf.xacro'" />
+        <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_$(arg gripper)_joint_limited_eih_workstation.urdf.xacro'" />
+      </group>
+    </group>
+
   </group>
 
 </launch>

@@ -1,3 +1,4 @@
+<?xml version="1.0" ?>
 <launch>
 
   <include file="$(find tm700_moveit_config)/launch/planning_context.launch" />
@@ -59,22 +60,6 @@
                                      move_group/ApplyPlanningSceneService
                                      move_group/ClearOctomapService
                                      " />
-
-    <!-- load these non-default MoveGroup capabilities -->
-    <!--
-    <param name="capabilities" value="
-                  a_package/AwsomeMotionPlanningCapability
-                  another_package/GraspPlanningPipeline
-                  " />
-    -->
-
-    <!-- inhibit these default MoveGroup capabilities -->
-    <!--
-    <param name="disable_capabilities" value="
-                  move_group/MoveGroupKinematicsService
-                  move_group/ClearOctomapService
-                  " />
-    -->
 
     <!-- Publish the planning scene of the physical robot so that rviz plugin can know actual robot -->
     <param name="planning_scene_monitor/publish_planning_scene" value="$(arg publish_monitored_planning_scene)" />

@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="limited" default="false"/>
+  <arg name="sim_workstation" default="false" />
+  <arg name="gripper" default="" />
   <arg name="eih" default="true"/>
   <arg name="paused" default="false"/>
   <arg name="gui" default="true"/>
@@ -14,8 +16,10 @@
 
   <!-- send robot urdf to param server -->
   <include file="$(find tm_description)/launch/tm700_upload.launch">
-    <arg name="eih" value="$(arg eih)"/>
     <arg name="limited" value="$(arg limited)"/>
+    <arg name="sim_workstation" value="$(arg sim_workstation)" />
+    <arg name="gripper" value="$(arg gripper)" />
+    <arg name="eih" value="$(arg eih)"/>
   </include>
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
